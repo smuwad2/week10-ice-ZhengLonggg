@@ -1,14 +1,13 @@
 <script setup>
-    // Import BlogPost component
     import blogPost from './subcomponents/BlogPost2.vue'
-	import axios from 'axios'
+    import axios from 'axios'
 </script>
 
 <script>
     export default {
         data() {
             return {
-                posts: [] // array of post objects
+                posts: []
             }  
         },
         computed: {
@@ -17,36 +16,40 @@
                     return 'http://localhost:3000'
                 else {
                     const codespace_host = window.location.hostname.replace('5173', '3000')
-                    return `https://${codespace_host}`;
+                    return `https://${codespace_host}`
                 }
             }
         },
-        created() { // created is a hook that executes as soon as Vue instance is created
+        created() {
             axios.get(`${this.baseUrl}/posts`)
-            .then(response => {
-                // this gets the data, which is an array
-                this.posts = response.data
-                console.log(response.data)
-            })
-            .catch(error => {
-                this.posts = [{ entry: 'There was an error: ' + error.message }]
-            })
+                .then(response => {
+                    this.posts = response.data
+                    console.log(response.data)
+                })
+                .catch(error => {
+                    this.posts = [{ 
+                        id: 1,
+                        subject: 'Error',
+                        entry: 'There was an error: ' + error.message,
+                        mood: 'Error'
+                    }]
+                })
         },
         components: {
             blogPost
         },
-
         methods: {
             deletePost(id) {
-                // TODO: Complete the delete method
-                axios.get(`${this.baseUrl}/deletePost`,{
+                axios.get(`${this.baseUrl}/deletePost`, {
                     params: {
-                        id:id
+                        id: id
                     }
-                }).then(response=>{
+                })
+                .then(response => {
                     console.log(response.data.message)
-                    this.posts= this.posts.filter(post=>post.id!=id)
-                }).catch(error=>{
+                    this.posts = this.posts.filter(post => post.id != id)
+                })
+                .catch(error => {
                     console.log(error)
                 })
             }
@@ -55,8 +58,11 @@
 </script>
 
 <template>
-   <!-- TODO: make use of the 'blog-post' component to display the blog posts -->
-   <blog-post v-for="post in posts" :subject="post.subject" :entry="post.entry" :mood="post.mood" :key="post.id">
-    <button class="btn btn-primary" @click="deletePost(post.id)">Delete</button>
+   <blog-post 
+       v-for="post in posts" 
+       :post="post"
+       :key="post.id">
+       <button class="btn btn-primary" @click="deletePost(post.id)">Delete</button>
    </blog-post>
 </template>
+
