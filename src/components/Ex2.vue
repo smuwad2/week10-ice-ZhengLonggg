@@ -23,10 +23,13 @@
             .then(response => {
                 // this gets the data, which is an array
                 this.posts = response.data
-                console.log(response.data)
+                console.log('All posts:',response.data)
+                response.data.forEach((post,index)=> {
+                console.log(`-Mood: ${post.mood}`)})
             })
             .catch(error => {
                 this.posts = [{ entry: 'There was an error: ' + error.message }]
+                console.log('hello');
             })
         },
         components: {
@@ -39,10 +42,8 @@
    <!-- TODO: make use of the 'blog-post' component to display the blog posts -->
     <blogPost 
         v-for="post in posts"
-        v-bind:subject="post.subject"
-        v-bind:entry="post.entry"
-        v-bind:mood="post.mood"
-        v-bind:key="post.id">
+        :post="post"
+        :key="post.id">
     </blogPost>
 </template>
 
